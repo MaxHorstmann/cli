@@ -15,6 +15,8 @@ import (
 type restartOptions struct {
 	nSeconds        int
 	nSecondsChanged bool
+	checkpoint    string
+	checkpointDir string
 
 	containers []string
 }
@@ -36,6 +38,14 @@ func NewRestartCommand(dockerCli command.Cli) *cobra.Command {
 
 	flags := cmd.Flags()
 	flags.IntVarP(&opts.nSeconds, "time", "t", 10, "Seconds to wait for stop before killing the container")
+
+	flags.StringVar(&opts.checkpoint, "checkpoint", "", "Restore from this checkpoint")
+	flags.SetAnnotation("checkpoint", "experimental", nil)
+	flags.SetAnnotation("checkpoint", "ostype", []string{"linux"})
+	flags.StringVar(&opts.checkpointDir, "checkpoint-dir", "", "Use a custom checkpoint storage directory")
+	flags.SetAnnotation("checkpoint-dir", "experimental", nil)
+	flags.SetAnnotation("checkpoint-dir", "ostype", []string{"linux"})
+	
 	return cmd
 }
 
