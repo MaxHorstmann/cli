@@ -8,6 +8,7 @@ import (
 
 	"github.com/docker/cli/cli"
 	"github.com/docker/cli/cli/command"
+	"github.com/docker/docker/api/types"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -59,7 +60,11 @@ func runRestart(dockerCli command.Cli, opts *restartOptions) error {
 	}
 
 	for _, name := range opts.containers {
-		if err := dockerCli.Client().ContainerRestart(ctx, name, timeout); err != nil {
+		startOptions := types.ContainerStartOptions{
+			CheckpointID:  opts.checkpoint,
+			CheckpointDir: opts.checkpointDir,
+		}
+		if err := dockerCli.Client().ContainerRestart(ctx, name, timeout, startOptions); err != nil {
 			errs = append(errs, err.Error())
 			continue
 		}
